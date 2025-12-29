@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+Flask-JWT-Extended
+Flask-CORS
+python-dotenv
+PyMySQL
+Werkzeug
+scikit-learn
+joblib
+tensorflow
+Pillow
+requests
+numpy
+pandas
