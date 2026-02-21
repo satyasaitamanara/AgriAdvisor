@@ -1,0 +1,19 @@
+# env
+.env
+backend/.env
+
+# python cache
+__pycache__/
+*.pyc
+
+# uploads & data
+backend/uploads/
+backend/api/uploads/
+backend/data/
+
+# ML models (too large for GitHub)
+# *.h5
+# *.joblib
+
+# node (frontend — we are not pushing it)
+node_modules/
