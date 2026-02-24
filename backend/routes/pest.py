@@ -541,18 +541,26 @@ def load_model():
     """
     try:
         # Load your trained model
-        model = tf.keras.models.load_model("plant_disease_model_final.h5") 
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        MODEL_PATH = os.path.join(BASE_DIR, "plant_disease_model_final.h5")
+        model = tf.keras.models.load_model(MODEL_PATH) 
         print("✅ Model loaded successfully!")
         return model
     except Exception as e:
         print("❌ Error loading model:", e)
         return None
 
-# Initialize model
-model = load_model()
+model = None
+
+def get_model():
+    global model
+    if model is None:
+        model = load_model()
+    return model
 
 def predict_pest(image_path):
     try:
+        get_model()
         # If model is not loaded, use a random prediction for demo
         if model is None:
             print("⚠️ Using mock prediction as model is not loaded")
