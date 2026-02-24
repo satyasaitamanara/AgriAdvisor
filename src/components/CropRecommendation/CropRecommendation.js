@@ -63,7 +63,7 @@ const CropRecommendation = () => {
   const [activeTab, setActiveTab] = useState("input");
   const [weatherData, setWeatherData] = useState(null);
 
-  const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5000";
+  const API_BASE = process.env.REACT_APP_API_BASE || "https://agriadvisor-l9g9.onrender.com";
 
   // Get user location
 
