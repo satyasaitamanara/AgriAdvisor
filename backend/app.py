@@ -23,8 +23,8 @@ def create_app():
     allow_headers=["Content-Type", "Authorization"])
     
     # Create upload directory if it doesn't exist
-    if hasattr(app.config, "UPLOAD_FOLDER"):
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # if hasattr(app.config, "UPLOAD_FOLDER"):
+        # os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     # Register existing blueprints
     from routes.auth import auth_bp
