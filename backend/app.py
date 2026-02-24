@@ -16,7 +16,11 @@ def create_app():
     db.init_app(app)
     jwt = JWTManager(app)
     mail.init_app(app)   # ✅ ADD
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(
+    app,
+    supports_credentials=True,
+    resources={r"/api/*": {"origins": "*"}},
+    allow_headers=["Content-Type", "Authorization"])
     
     # Create upload directory if it doesn't exist
     if hasattr(app.config, "UPLOAD_FOLDER"):
