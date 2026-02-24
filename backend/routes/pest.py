@@ -568,8 +568,8 @@ def predict_pest(image_path):
             return predicted_label, confidence
         
         # Load and preprocess image - use 160x160 to match training
-        img.thumbnail((160, 160))
-        img = Image.open(image_path).convert("RGB").resize((160, 160))
+        img = Image.open(image_path).convert("RGB")
+        img = img.resize((160, 160))
         img_array = np.array(img, dtype=np.float32) / 255.0  # normalize like training
         img_array = np.expand_dims(img_array, axis=0)
 
