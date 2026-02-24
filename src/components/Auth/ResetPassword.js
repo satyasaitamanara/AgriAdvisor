@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle, ArrowLeft, Key, Shield, Sprout } from "lucide-react";
 
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5000";
+const API_BASE = process.env.REACT_APP_API_BASE || "https://agriadvisor-l9g9.onrender.com";
 
 export default function ResetPassword() {
   const [params] = useSearchParams();
