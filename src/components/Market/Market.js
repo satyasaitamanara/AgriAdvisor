@@ -17,7 +17,7 @@ const Market = () => {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState('');
 
-  const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+  const API_BASE = process.env.REACT_APP_API_BASE || 'https://agriadvisor-l9g9.onrender.com';
 
   const fetchMarketData = useCallback(async () => {
     try {
