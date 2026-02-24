@@ -598,6 +598,7 @@ def predict_pest(image_path):
 @jwt_required()
 def detect_pest():
     try:
+        print("🔥 PEST API HIT")
         farmer_id = get_jwt_identity()
         
         # Check if file is present
