@@ -38,7 +38,7 @@ const Weather = () => {
   const [searchInput, setSearchInput] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
-  const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+  const API_BASE = process.env.REACT_APP_API_BASE || 'https://agriadvisor-l9g9.onrender.com';
 
   // Get weather icon based on conditions
   const getWeatherIcon = (condition) => {
