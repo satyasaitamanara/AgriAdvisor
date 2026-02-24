@@ -5,13 +5,13 @@ from flask_cors import cross_origin
 
 chatbot_bp = Blueprint('chatbot', __name__)
 
-# Initialize Groq client
-api_key = os.getenv("GROQ_API_KEY")
+def get_groq_client():
+    api_key = os.getenv("GROQ_API_KEY")
 
-if not api_key:
-    raise ValueError("GROQ_API_KEY is not set in environment")
+    if not api_key:
+        raise RuntimeError("GROQ_API_KEY not configured")
 
-client = Groq(api_key=api_key)
+    return Groq(api_key=api_key)
 
 # Updated Agriculture-specific system prompts with better Telugu completion instructions
 AGRICULTURE_SYSTEM_PROMPT = {
@@ -72,6 +72,7 @@ Keep answers concise but COMPLETE. If you don't know something, suggest consulti
 @cross_origin()
 def chat():
     try:
+        client = get_groq_client()
         if request.method == 'OPTIONS':
             return jsonify({'status': 'ok'}), 200
             
