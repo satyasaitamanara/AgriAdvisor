@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Sprout } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const REACT_APP_API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+const REACT_APP_API_BASE = process.env.REACT_APP_API_BASE || 'https://agriadvisor-l9g9.onrender.com';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
