@@ -1,3 +1,6 @@
+# -------------------------
+# Core backend
+# -------------------------
 Flask==3.1.1
 Flask-Bcrypt==1.0.1
 Flask-JWT-Extended==4.7.1
@@ -5,26 +8,45 @@ Flask-Mail==0.10.0
 Flask-SQLAlchemy==3.1.1
 flask-cors==6.0.1
 gunicorn==21.2.0
+python-dotenv==1.0.1
+requests==2.32.3
+PyMySQL==1.1.1
 
+# -------------------------
+# Numerical / Data
+# -------------------------
 numpy==1.26.4
 pandas==2.2.2
-scikit-learn==1.7.2
-joblib==1.5.2
 scipy==1.11.4
 
-tensorflow==2.16.1
-keras==3.0.5
-h5py==3.10.0
+# -------------------------
+# Machine Learning (MUST match training)
+# -------------------------
+scikit-learn==1.7.2
+joblib==1.5.2
 
-opencv-python-headless==4.9.0.80
-
+# -------------------------
+# Explainability
+# -------------------------
 shap==0.44.1
 numba==0.59.1
 
-torch==2.2.2
-torchvision==0.17.2
+# -------------------------
+# Deep Learning (CPU stable build)
+# -------------------------
+tensorflow==2.16.1
+keras==3.0.5
+h5py==3.10.0
+protobuf==4.25.8
+Pillow==10.3.0
 
-pillow==10.3.0
-requests==2.32.3
-python-dotenv==1.0.1
-PyMySQL==1.1.1
+# -------------------------
+# Image processing
+# -------------------------
+opencv-python-headless==4.9.0.80
+
+# -------------------------
+# AI APIs
+# -------------------------
+groq==0.9.0
+openai==2.14.0
