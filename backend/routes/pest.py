@@ -625,7 +625,7 @@ def detect_pest():
             save_path = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
             
             # Create upload directory if it doesn't exist
-            # os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
             
             # Save file
             file.save(save_path)
