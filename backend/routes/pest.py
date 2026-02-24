@@ -679,6 +679,7 @@ def detect_pest():
             # Convert image to base64 for frontend display
             with open(save_path, "rb") as image_file:
                 encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+                os.remove(save_path)
             
             # Save to database
             pest_report = PestReport(
