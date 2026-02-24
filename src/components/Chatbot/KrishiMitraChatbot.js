@@ -21,7 +21,7 @@ const KrishiMitraChatbot = ({ onClose }) => {
   const recognitionRef = useRef(null);
 
   // API endpoint - adjust based on your backend URL
-  const API_URL = "http://localhost:5000/api/chatbot/chat";
+  const API_URL = "https://agriadvisor-l9g9.onrender.com/api/chatbot/chat";
 
 
 
