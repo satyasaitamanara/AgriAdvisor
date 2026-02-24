@@ -560,7 +560,7 @@ def get_model():
 
 def predict_pest(image_path):
     try:
-        get_model()
+        model = get_model()
         # If model is not loaded, use a random prediction for demo
         if model is None:
             print("⚠️ Using mock prediction as model is not loaded")
