@@ -542,7 +542,7 @@ def load_model():
     try:
         # Load your trained model
         model = tf.keras.models.load_model("plant_disease_model_final.h5")
-        print("✅ Model loaded successfully!")
+        print("✅ Model loaded successfully!...")
         return model
     except Exception as e:
         print("❌ Error loading model:", e)
@@ -553,6 +553,7 @@ model = None
 def get_model():
     global model
     if model is None:
+        print("⚡ Loading model for first time...")
         model = load_model()
     return model
 
