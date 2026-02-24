@@ -541,9 +541,7 @@ def load_model():
     """
     try:
         # Load your trained model
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        MODEL_PATH = os.path.join(BASE_DIR, "plant_disease_model_final.h5")
-        model = tf.keras.models.load_model(MODEL_PATH) 
+        model = tf.keras.models.load_model("plant_disease_model_final.h5")
         print("✅ Model loaded successfully!")
         return model
     except Exception as e:
