@@ -560,150 +560,117 @@ def get_model():
         model = load_model()
     return model
 
-def predict_pest(image_path):
+def predict_pest_from_image(img):
     try:
         model = get_model()
-        # If model is not loaded, use a random prediction for demo
+
         if model is None:
             print("⚠️ Using mock prediction as model is not loaded")
-            # For demo purposes, randomly select a disease
-            predicted_label = random.choice(CLASS_NAMES)
-            confidence = random.uniform(0.85, 0.98)
-            return predicted_label, confidence
-        
-        # Load and preprocess image - use 160x160 to match training
-        img = Image.open(image_path).convert("RGB")
-        img = img.resize((160, 160))
-        img_array = np.array(img, dtype=np.float32) / 255.0  # normalize like training
+            return random.choice(CLASS_NAMES), random.uniform(0.85, 0.98)
+
+        img_array = np.array(img, dtype=np.float32) / 255.0
         img_array = np.expand_dims(img_array, axis=0)
 
-        # Run prediction
         prediction = model.predict(img_array, verbose=0)
+
         predicted_class = int(np.argmax(prediction, axis=1)[0])
         confidence = float(np.max(prediction))
 
-        print("Prediction array shape:", prediction.shape)
-        print("Predicted index:", predicted_class)
-        
-        # Ensure the predicted class is within the valid range
-        if predicted_class < 0 or predicted_class >= len(CLASS_NAMES):
-            print(f"❌ Invalid predicted class index: {predicted_class}")
-            # Fallback to a random prediction
+        if predicted_class >= len(CLASS_NAMES):
             predicted_class = random.randint(0, len(CLASS_NAMES) - 1)
-            confidence = random.uniform(0.7, 0.9)
-        
-        predicted_label = CLASS_NAMES[predicted_class]
-        print("Predicted label:", predicted_label)
-        print("Confidence:", confidence)
 
-        return predicted_label, confidence
+        return CLASS_NAMES[predicted_class], confidence
 
     except Exception as e:
-        print(f"❌ Error in prediction: {e}")
-        # Fallback to a random prediction
-        predicted_label = random.choice(CLASS_NAMES)
-        confidence = random.uniform(0.7, 0.9)
-        return predicted_label, confidence
+        print("❌ Error in prediction:", e)
+        return random.choice(CLASS_NAMES), random.uniform(0.7, 0.9)
 
 @pest_bp.route('/detect', methods=['POST'])
 @jwt_required()
 def detect_pest():
     try:
         print("🔥 PEST API HIT")
+
         farmer_id = get_jwt_identity()
-        
-        # Check if file is present
+
         if 'image' not in request.files:
             return jsonify({"error": "No image file provided"}), 400
-        
+
         file = request.files['image']
-        
-        # Check if file is selected
+
         if file.filename == '':
             return jsonify({"error": "No selected file"}), 400
-        
-        if file and allowed_file(file.filename):
-            # Generate unique filename
-            filename = secure_filename(file.filename)
-            unique_filename = f"{uuid.uuid4().hex}_{filename}"
-            save_path = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
-            
-            # Create upload directory if it doesn't exist
-            # os.makedirs(os.path.dirname(save_path), exist_ok=True)
-            
-            # # Save file
-            # file.save(save_path)
-            
-            # Get prediction
-            predicted_label, confidence = predict_pest(save_path)
-            
-            # Get advisory information
-            advisory_info = disease_info.get(predicted_label, {
-                "precautions": ["Consult local agricultural officer for specific advice"],
-                "pests": ["Unknown pest"],
-                "common_name": "Unknown Disease",
-                "symptoms": "Unknown symptoms",
-                "organic": "Use organic methods like neem oil, biocontrol agents, and cultural practices",
-                "chemical": "Consult with agricultural expert for appropriate chemical treatments"
-            })
-            
-            # Get Telugu translations for this specific disease
-            telugu_translations = telugu_disease_translations.get(predicted_label, {})
-            
-            # If no specific translation found, create basic translations
-            if not telugu_translations:
-                telugu_translations = {
-                    "disease_name": translate_to_telugu(predicted_label),
-                    "common_name": translate_to_telugu(advisory_info["common_name"]),
-                    "symptoms": translate_to_telugu(advisory_info["symptoms"]),
-                    "prevention": [translate_to_telugu(precaution) for precaution in advisory_info["precautions"]],
-                    "pests": [translate_to_telugu(pest) for pest in advisory_info["pests"]],
-                    "organic": translate_to_telugu(advisory_info["organic"]),
-                    "chemical": translate_to_telugu(advisory_info["chemical"])
-                }
-            else:
-                # Ensure we have all required fields
-                if "organic" not in telugu_translations:
-                    telugu_translations["organic"] = translate_to_telugu(advisory_info["organic"])
-                if "chemical" not in telugu_translations:
-                    telugu_translations["chemical"] = translate_to_telugu(advisory_info["chemical"])
-            
-            # Prepare response
-            advisory = {
-                "organic": advisory_info["organic"],
-                "chemical": advisory_info["chemical"],
-                "prevention": advisory_info["precautions"],
-                "pests": advisory_info["pests"],
-                "common_name": advisory_info["common_name"],
-                "symptoms": advisory_info["symptoms"],
-                "telugu": telugu_translations
+
+        if not allowed_file(file.filename):
+            return jsonify({"error": "Invalid file type"}), 400
+
+        # ✅ READ IMAGE FROM MEMORY (NO DISK WRITE)
+        img = Image.open(file.stream).convert("RGB")
+        img_resized = img.resize((160, 160))
+
+        # ✅ PREDICT
+        predicted_label, confidence = predict_pest_from_image(img_resized)
+
+        # ✅ ADVISORY (unchanged)
+        advisory_info = disease_info.get(predicted_label, {
+            "precautions": ["Consult local agricultural officer for specific advice"],
+            "pests": ["Unknown pest"],
+            "common_name": "Unknown Disease",
+            "symptoms": "Unknown symptoms",
+            "organic": "Use organic methods like neem oil, biocontrol agents, and cultural practices",
+            "chemical": "Consult with agricultural expert for appropriate chemical treatments"
+        })
+
+        telugu_translations = telugu_disease_translations.get(predicted_label, {})
+
+        if not telugu_translations:
+            telugu_translations = {
+                "disease_name": translate_to_telugu(predicted_label),
+                "common_name": translate_to_telugu(advisory_info["common_name"]),
+                "symptoms": translate_to_telugu(advisory_info["symptoms"]),
+                "prevention": [translate_to_telugu(p) for p in advisory_info["precautions"]],
+                "pests": [translate_to_telugu(p) for p in advisory_info["pests"]],
+                "organic": translate_to_telugu(advisory_info["organic"]),
+                "chemical": translate_to_telugu(advisory_info["chemical"])
             }
-            
-            # Convert image to base64 for frontend display
-            with open(save_path, "rb") as image_file:
-                encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
-            
-            # Save to database
-            pest_report = PestReport(
-                farmer_id=farmer_id,
-                image_path=save_path,
-                predicted_label=predicted_label,
-                confidence=confidence,
-                advisory_json=advisory
-            )
-            db.session.add(pest_report)
-            db.session.commit()
-            
-            return jsonify({
-                "prediction": predicted_label,
-                "confidence": confidence,
-                "advisory": advisory,
-                "report_id": pest_report.id,
-                "image_data": f"data:image/jpeg;base64,{encoded_image}"
-            }), 200
-        
-        return jsonify({"error": "Invalid file type"}), 400
-        
+
+        advisory = {
+            "organic": advisory_info["organic"],
+            "chemical": advisory_info["chemical"],
+            "prevention": advisory_info["precautions"],
+            "pests": advisory_info["pests"],
+            "common_name": advisory_info["common_name"],
+            "symptoms": advisory_info["symptoms"],
+            "telugu": telugu_translations
+        }
+
+        # ✅ BASE64 (FROM MEMORY — FAST)
+        buffer = io.BytesIO()
+        img.save(buffer, format="JPEG")
+        encoded_image = base64.b64encode(buffer.getvalue()).decode()
+
+        # ✅ OPTIONAL: store image path (Render safe)
+        image_path = f"memory_{uuid.uuid4().hex}.jpg"
+
+        pest_report = PestReport(
+            farmer_id=farmer_id,
+            image_path=image_path,
+            predicted_label=predicted_label,
+            confidence=confidence,
+            advisory_json=advisory
+        )
+
+        db.session.add(pest_report)
+        db.session.commit()
+
+        return jsonify({
+            "prediction": predicted_label,
+            "confidence": confidence,
+            "advisory": advisory,
+            "report_id": pest_report.id,
+            "image_data": f"data:image/jpeg;base64,{encoded_image}"
+        }), 200
+
     except Exception as e:
-        print(f"Error in pest detection: {e}")
+        print("❌ Error in pest detection:", e)
         return jsonify({"error": str(e)}), 500
