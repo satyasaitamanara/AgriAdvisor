@@ -51,6 +51,11 @@ def create_app():
     # ✅ Register reset password routes
     app.register_blueprint(password_reset_bp, url_prefix="/api")
     
+    with app.app_context():
+    from routes.pest import get_model
+    print("🔥 Preloading model...")
+    get_model()
+    
     # Root test route
     @app.route("/")
     def index():
