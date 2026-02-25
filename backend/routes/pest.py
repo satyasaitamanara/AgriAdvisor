@@ -18,6 +18,9 @@ pest_bp = Blueprint('pest', __name__)
 # Allowed extensions for image uploads
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+
+tf.config.set_visible_devices([], 'GPU')
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -541,7 +544,7 @@ def load_model():
     """
     try:
         # Load your trained model
-        model = tf.keras.models.load_model("plant_disease_model_final.h5")
+        model = tf.keras.models.load_model("plant_disease_model_final.h5", compile=False)
         print("✅ Model loaded successfully!...")
         return model
     except Exception as e:
