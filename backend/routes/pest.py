@@ -626,10 +626,10 @@ def detect_pest():
             save_path = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
             
             # Create upload directory if it doesn't exist
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            # os.makedirs(os.path.dirname(save_path), exist_ok=True)
             
-            # Save file
-            file.save(save_path)
+            # # Save file
+            # file.save(save_path)
             
             # Get prediction
             predicted_label, confidence = predict_pest(save_path)
@@ -679,7 +679,6 @@ def detect_pest():
             # Convert image to base64 for frontend display
             with open(save_path, "rb") as image_file:
                 encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
-                os.remove(save_path)
             
             # Save to database
             pest_report = PestReport(
