@@ -21,7 +21,8 @@ class Config:
     ML_MODEL_PATH = os.getenv("ML_MODEL_PATH", "./ml_models/crop_model.pkl")
     PEST_MODEL_PATH = os.getenv("PEST_MODEL_PATH", "./ml_models/pest_model.h5")
 
-    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "./uploads")
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
 
     # ================================
