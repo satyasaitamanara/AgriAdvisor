@@ -561,30 +561,18 @@ def get_model():
     return model
 
 def predict_pest_from_image(img):
-    try:
-        model = get_model()
+    model = get_model()
 
-        if model is None:
-            print("⚠️ Using mock prediction as model is not loaded")
-            return random.choice(CLASS_NAMES), random.uniform(0.85, 0.98)
+    img_array = np.array(img, dtype=np.float32) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
 
-        img_array = np.array(img, dtype=np.float32) / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
+    prediction = model.predict(img_array, verbose=0)
 
-        prediction = model.predict(img_array, verbose=0)
+    predicted_class = int(np.argmax(prediction, axis=1)[0])
+    confidence = float(np.max(prediction))
 
-        predicted_class = int(np.argmax(prediction, axis=1)[0])
-        confidence = float(np.max(prediction))
-
-        if predicted_class >= len(CLASS_NAMES):
-            predicted_class = random.randint(0, len(CLASS_NAMES) - 1)
-
-        return CLASS_NAMES[predicted_class], confidence
-
-    except Exception as e:
-        print("❌ Error in prediction:", e)
-        return random.choice(CLASS_NAMES), random.uniform(0.7, 0.9)
-
+    return CLASS_NAMES[predicted_class], confidence
+    
 @pest_bp.route('/detect', methods=['POST'])
 @jwt_required()
 def detect_pest():
